@@ -2,3 +2,4 @@ pyspark
 pytest
 chispa
 pandas
+pyspark-test
