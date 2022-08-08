@@ -1,5 +1,7 @@
 import pytest
+from pyspark import SparkConf
 from pyspark.sql import SparkSession
+
 
 @pytest.fixture(scope="session")
 def spark_session():
@@ -13,10 +15,24 @@ def spark_session():
     test execution session.
 
     """
-    spark = SparkSession.builder.master("local[*]").appName("unit_test").getOrCreate()
-    spark.sparkContext.setLogLevel("ERROR") 
-    # We can also set number of partitions to 1, and
-    # the number of executors to 1 for cosnuming less
-    # resources.
+    config = _get_local_spark_config()
+    spark = (
+        SparkSession.builder.config(conf=config)
+        .appName("spark_unit_testing")
+        .getOrCreate()
+    )
+    spark.sparkContext.setLogLevel("ERROR")
+
     yield spark
     spark.stop()
+
+
+def _get_local_spark_config() -> SparkConf:
+    CONFIG = [
+        ("spark.default.parallelism", 1),
+        ("spark.executor.cores", 1),
+        ("spark.executor.instances", 1),
+        ("spark.sql.shuffle.partitions", 1),
+    ]
+
+    return SparkConf().setAll(CONFIG)
