@@ -29,6 +29,12 @@ def main():
 
     spark = SparkSession.builder.appName(config.get("app_name")).getOrCreate()
 
+# Input data sample:
+#| vendor_id | trip_distance |   total_amount  |
+#|:----------|--------------:|----------------:|
+#| CSH       |            20 |             100 |
+#| CRD       |            30 |             200 |
+#| CSH       |            25 |             150 |
     run_ny_taxi_prices_job(spark,config=config)
 
 
